@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 
-plugins {
-    id "com.jfrog.bintray" version "1.1"
-}
-
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
@@ -32,6 +28,12 @@ version = "${mongoVersion}__0.5"
 
 repositories {
     mavenCentral()
+    repositories {
+        maven {
+            url = "s3://external-build-dependencies"
+            authentication { awsIm(AwsImAuthentication) }
+        }
+    }
 }
 
 dependencies {
@@ -111,27 +113,10 @@ publishing {
             }
         }
     }
-}
-
-
-bintray {
-    user = bintrayUser
-    key = bintrayKey
-    publications = ['mavenJava']
-    pkg {
-        repo = 'maven'
-        name = project.name
-        desc = projectInfo.description
-        websiteUrl = projectInfo.url
-        issueTrackerUrl = projectInfo.issues
-        vcsUrl = projectInfo.scm.url
-        licenses = [projectInfo.license.shortName]
-        labels = projectInfo.tags
-        version {
-            gpg {
-                sign = true
-                passphrase = gpgPassphrase
-            }
+    repositories {
+        maven {
+            url = "s3://evrythng-build-artifacts"
+            authentication { awsIm(AwsImAuthentication) }
         }
     }
 }
